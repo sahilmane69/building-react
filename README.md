@@ -65,11 +65,16 @@ _Solution_: We attached a `hooks` array to each Fiber node. `useState` reads fro
 
 ## Features
 
-- [x] Virtual DOM
-- [x] Fiber Reconciliation (Concurrent Mode)
-- [x] Functional Components
-- [x] Hooks (useState)
-- [ ] Class Components (Deprecated in Fiber version for simplicity)
+- [x] **Virtual DOM**: Lightweight UI representation.
+- [x] **Fiber Reconciliation**: Time-sliced, non-blocking rendering.
+- [x] **Functional Components**: Modern component architecture.
+- [x] **Hooks**: `useState` implementation.
+- [x] **Concurrent Mode**: Powered by `requestIdleCallback`.
+
+## Roadmap
+
+- [ ] `useEffect` Hook (Future)
+- [ ] Synthetic Event System (Future)
 
 ## License
 
