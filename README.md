@@ -7,24 +7,28 @@ Goo is a minimalist, educational implementation of a React-like library. It stri
 Modern frameworks are complex. Goo is different:
 
 - **Transparent**: Every line of code is readable.
-- **Educational**: Demonstrates the "Stack Reconciler" architecture.
-- **Functional**: Supports Components, State, and Virtual DOM.
+- **Educational**: Demonstrates "**Fiber Architecture**" and **Hooks**.
+- **Modern**: Uses `requestIdleCallback` for concurrent mode.
 
 ## Architecture
 
-Goo mimics the architecture of React 15.
+Goo mimics the architecture of Modern React (Fiber).
 
 ### 1. Virtual DOM (src/element.js)
 
 Goo works with lightweight JavaScript objects instead of directly manipulating the browser DOM.
 
-### 2. Reconciler (src/reconciler.js)
+### 2. Fiber Reconciler (src/reconciler.js)
 
-The core recursive algorithm that compares new and previous Virtual DOM trees to update the real DOM efficiently.
+The core engine. Unlike the old Stack reconciler, Fiber:
 
-### 3. Component System (src/component.js)
+- Breaks work into small units.
+- Uses `requestIdleCallback` to avoid blocking the main thread.
+- Supports Functional Components with Hooks.
 
-Supports both Class Components (stateful) and Functional Components (stateless).
+### 3. Hooks (src/reconciler.js)
+
+Implements `useState` by linking state to Fiber nodes.
 
 ## Getting Started
 
@@ -49,28 +53,23 @@ Navigate to `http://localhost:8000/examples/demo/index.html`.
 
 ## Challenges & Learnings
 
-### 1. The Reconciler
+### 1. From Stack to Fiber
 
-_Problem_: Initial attempts re-rendered the entire page on every state update.
-_Solution_: Implemented a diffing algorithm to recursively check element types and update props or replace nodes as needed.
+_Problem_: Recursive rendering blocks the main thread for large trees.
+_Solution_: Implemented a "Work Loop" using `requestIdleCallback` to yield control back to the browser.
 
-### 2. Component Identity
+### 2. Implementing Hooks
 
-_Problem_: Distinguishing between functional and class components.
-_Solution_: Checks for `prototype.render` during instantiation to branch logic correctly.
+_Problem_: Functions are stateless, so where do we store `count`?
+_Solution_: We attached a `hooks` array to each Fiber node. `useState` reads from this array based on the call index.
 
-### 3. Unmounting
-
-_Problem_: Manual DOM clearing caused internal reference issues in tests.
-_Solution_: Implemented proper unmounting logic to clean up internal references.
-
-## Roadmap
+## Features
 
 - [x] Virtual DOM
-- [x] Reconciliation
-- [x] Components (Class & Functional)
-- [ ] Hooks (useState, useEffect)
-- [ ] Fiber Architecture
+- [x] Fiber Reconciliation (Concurrent Mode)
+- [x] Functional Components
+- [x] Hooks (useState)
+- [ ] Class Components (Deprecated in Fiber version for simplicity)
 
 ## License
 

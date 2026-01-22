@@ -1,4 +1,5 @@
-export function updateDomProperties(dom, prevProps, nextProps) {
+export function socketDomProperties(dom, prevProps, nextProps) {
+  // Rename this function internally to avoid the cycle until we fully fix the structure
   const isEvent = (name) => name.startsWith("on");
   const isAttribute = (name) => !isEvent(name) && name !== "children";
 
@@ -30,3 +31,21 @@ export function updateDomProperties(dom, prevProps, nextProps) {
       dom.addEventListener(eventType, nextProps[name]);
     });
 }
+
+export function createDom(fiber) {
+  const dom =
+    fiber.type === "TEXT_ELEMENT"
+      ? document.createTextNode("")
+      : document.createElement(fiber.type);
+
+  socketDomProperties(dom, {}, fiber.props);
+
+  return dom;
+}
+
+export function updateDom(dom, prevProps, nextProps) {
+  return socketDomProperties(dom, prevProps, nextProps);
+}
+
+// Export as updateDomProperties for backward compatibility/external use
+export { socketDomProperties as updateDomProperties };
