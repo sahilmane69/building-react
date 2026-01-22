@@ -1,81 +1,47 @@
-# Goo Humanify
+# Building React from Scratch
 
-Goo is a minimalist, educational implementation of a React-like library. It strips away production complexity to reveal the core algorithms behind Reactive UIs.
+An educational project focused on building a **React-like library from scratch** to understand how modern reactive UI frameworks work internally.
 
-## Philosophy
+This repository prioritizes **core concepts over production complexity**.
 
-Modern frameworks are complex. Goo is different:
+---
 
-- **Transparent**: Every line of code is readable.
-- **Educational**: Demonstrates "**Fiber Architecture**" and **Hooks**.
-- **Modern**: Uses `requestIdleCallback` for concurrent mode.
+## Goo
 
-## Architecture
+**Goo** is a minimalist React-like library created in this project.
 
-Goo mimics the architecture of Modern React (Fiber).
+It is:
+- **Simple & readable**
+- **Educational**
+- Inspired by **React Fiber & Hooks**
 
-### 1. Virtual DOM (src/element.js)
+Goo demonstrates how rendering, reconciliation, and state management work under the hood.
 
-Goo works with lightweight JavaScript objects instead of directly manipulating the browser DOM.
+---
 
-### 2. Fiber Reconciler (src/reconciler.js)
+## Core Concepts
 
-The core engine. Unlike the old Stack reconciler, Fiber:
+- Virtual DOM
+- Fiber-based reconciliation
+- Concurrent rendering using `requestIdleCallback`
+- Basic Hooks (`useState`)
+- Functional Components
 
-- Breaks work into small units.
-- Uses `requestIdleCallback` to avoid blocking the main thread.
-- Supports Functional Components with Hooks.
-
-### 3. Hooks (src/reconciler.js)
-
-Implements `useState` by linking state to Fiber nodes.
+---
 
 ## Getting Started
-
-### Installation
-
-Clone the repository:
 
 ```bash
 git clone https://github.com/sahilmane69/building-react.git
 cd building-react
-```
-
-### Running the Demo
-
-Serve the project using a local server (e.g., Python):
-
-```bash
 python3 -m http.server 8000
 ```
 
-Navigate to `http://localhost:8000/examples/demo/index.html`.
+Open:  
+`http://localhost:8000/examples/demo/index.html`
 
-## Challenges & Learnings
+---
 
-### 1. From Stack to Fiber
+## Status
 
-_Problem_: Recursive rendering blocks the main thread for large trees.
-_Solution_: Implemented a "Work Loop" using `requestIdleCallback` to yield control back to the browser.
-
-### 2. Implementing Hooks
-
-_Problem_: Functions are stateless, so where do we store `count`?
-_Solution_: We attached a `hooks` array to each Fiber node. `useState` reads from this array based on the call index.
-
-## Features
-
-- [x] **Virtual DOM**: Lightweight UI representation.
-- [x] **Fiber Reconciliation**: Time-sliced, non-blocking rendering.
-- [x] **Functional Components**: Modern component architecture.
-- [x] **Hooks**: `useState` implementation.
-- [x] **Concurrent Mode**: Powered by `requestIdleCallback`.
-
-## Roadmap
-
-- [ ] `useEffect` Hook (Future)
-- [ ] Synthetic Event System (Future)
-
-## License
-
-MIT. Made by Sahil Mane.
+🚧 Learning-focused project — not for production use.
