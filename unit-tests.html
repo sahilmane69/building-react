@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+     <meta charset="UTF-8">
+     <title>Goo React Test Suite</title>
+     <style>
+          body {
+               font-family: monospace;
+               padding: 20px;
+               background: #fff;
+               color: #000;
+          }
+
+          h1 {
+               font-size: 16px;
+               border-bottom: 1px solid #000;
+               padding-bottom: 10px;
+               margin-bottom: 20px;
+          }
+
+          .log-entry {
+               margin-bottom: 5px;
+          }
+
+          .test-container {
+               display: none;
+          }
+     </style>
+</head>
+
+<body>
+     <h1>TEST RESULTS</h1>
+     <div id="results"></div>
+     <div id="test-root" class="test-container"></div>
+
+     <script type="module">
+          import { createElement, render, Component } from "./mini-react.js";
+
+          const log = (msg) => {
+               const div = document.createElement("div");
+               div.className = "log-entry";
+               div.textContent = msg;
+               document.getElementById("results").appendChild(div);
+          };
+
+          const assert = (condition, message) => {
+               if (condition) {
+                    log(`[OK] ${message}`);
+               } else {
+                    log(`[FAIL] ${message}`);
+                    console.error("Assertion failed:", message);
+               }
+          };
+
+          const assertEqual = (actual, expected, message) => {
+               const jsonActual = JSON.stringify(actual);
+               const jsonExpected = JSON.stringify(expected);
+               if (jsonActual === jsonExpected) {
+                    log(`[OK] ${message}`);
+               } else {
+                    log(`[FAIL] ${message} (Expected ${jsonExpected}, got ${jsonActual})`);
+                    console.error("Expected:", expected, "Got:", actual);
+               }
+          };
+
+          async function runTests() {
+               try {
+                    const container = document.getElementById("test-root");
+
+                    // Test 1: createElement basic structure
+                    const element = createElement("div", { id: "foo" }, "Hello");
+                    const expected = {
+                         type: "div",
+                         props: {
+                              id: "foo",
+                              children: [
+                                   {
+                                        type: "TEXT_ELEMENT",
+                                        props: { nodeValue: "Hello", children: [] }
+                                   }
+                              ]
+                         }
+                    };
+                    assertEqual(element, expected, "createElement produces correct VDOM object");
+
+                    // Test 2: render basic element to DOM
+                    render(null, container);
+                    const vdom = createElement("span", { id: "bar" }, "World");
+                    render(vdom, container);
+
+                    assert(
+                         container.innerHTML === '<span id="bar">World</span>',
+                         "render mounts HTML element correctly"
+                    );
+
+                    // Test 3: render nested elements
+                    render(null, container);
+                    const nested = createElement("div", null, createElement("p", null, "Nested"));
+                    render(nested, container);
+                    assert(
+                         container.innerHTML === '<div><p>Nested</p></div>',
+                         "render mounts nested elements correctly"
+                    );
+
+                    // Test 4: Component Rendering
+                    render(null, container);
+                    class MyComp extends Component {
+                         render() {
+                              return createElement("h1", null, `Hi ${this.props.name}`);
+                         }
+                    }
+                    render(createElement(MyComp, { name: "Alice" }), container);
+                    await new Promise(r => setTimeout(r, 10));
+
+                    assert(
+                         container.innerHTML === '<h1>Hi Alice</h1>',
+                         "Class Component renders correctly with props"
+                    );
+
+                    // Test 5: State Update
+                    render(null, container);
+                    class Counter extends Component {
+                         constructor(props) {
+                              super(props);
+                              this.state = { count: 1 };
+                         }
+                         render() {
+                              return createElement("p", {
+                                   onClick: () => this.setState({ count: this.state.count + 1 })
+                              }, `Count: ${this.state.count}`);
+                         }
+                    }
+                    render(createElement(Counter), container);
+                    const pTag = container.querySelector("p");
+                    assert(pTag && pTag.textContent === "Count: 1", "Initial state rendered correctly");
+
+                    if (pTag) {
+                         pTag.click();
+                         assert(pTag.textContent === "Count: 2", "setState updates the DOM");
+                    }
+
+                    // Test 6: Functional Component
+                    render(null, container);
+                    function FunctionalComp(props) {
+                         return createElement("h2", null, props.text);
+                    }
+                    render(createElement(FunctionalComp, { text: "Hello Functional" }), container);
+                    assert(
+                         container.innerHTML === "<h2>Hello Functional</h2>",
+                         "Functional Component renders correctly"
+                    );
+
+                    console.log("%c Tests runned well done ur react is ready ", "background: #222; color: #bada55; font-size: 20px; padding: 10px; border-radius: 5px;");
+
+               } catch (e) {
+                    log(`[FATAL] Test Suite Crashed: ${e.message}`);
+                    console.error(e);
+               }
+          }
+
+          runTests();
+     </script>
+</body>
+
+</html>
